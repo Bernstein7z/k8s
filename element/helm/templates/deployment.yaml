@@ -1,37 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: element
+  name: {{ .Release.Name }}
 spec:
-    selector:
-        matchLabels:
-            app: element
-    replicas: 1
-    template:
-        metadata:
-            labels:
-                app: element
-        spec:
-            containers:
-                - name: element
-                  image: custom/element-web:v1.0.0
-                  imagePullPolicy: Never
-                  volumeMounts:
-                      - name: config-volume
-                        readOnly: true
-                        mountPath: /app/config.json
-                        subPath: config.json
-                  ports:
-                      - containerPort: 80
-                        name: element
-                        protocol: TCP
-                  livenessProbe:
-                      httpGet:
-                          path: /
-                          port: element
-                      initialDelaySeconds: 10
-                      periodSeconds: 10
-            volumes:
-                - name: config-volume
-                  configMap:
-                      name: element-config
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              readOnly: true
+              mountPath: /app/config.json
+              subPath: config.json
+          ports:
+            - containerPort: {{ .Values.containers.containerPort }}
+              name: {{ .Release.Name }}
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: {{ .path }}
+              port: {{ .port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+          {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-cm
