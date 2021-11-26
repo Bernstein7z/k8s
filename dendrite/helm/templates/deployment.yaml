@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "v0.5.0" }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: cofig-volume
+              readOnly: true
+              mountPath: /etc/dendrite/dendrite.yaml
+              subPath: dendrite.yaml
+          ports:
+            - name: http
+              containerPort: 8008
+              protocol: TCP
+            - name: https
+              containerPort: 8448
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: {{ .path }}
+              port: {{ .port }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            periodSeconds: {{ .periodSeconds }}
+          {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-cm

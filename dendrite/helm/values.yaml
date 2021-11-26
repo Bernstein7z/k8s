@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  repository: matrixdotorg/dendrite-monolith
+  pullPolicy: IfNotPresent
+  tag: v.0.5.1
+
+service:
+  type: ClusterIP
+  http:
+    port: 8004
+  https:
+    port: 8448
