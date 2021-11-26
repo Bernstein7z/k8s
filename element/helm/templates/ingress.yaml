@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-ingress
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.annotations.kubernetesIoIngressClass }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
@@ -18,6 +18,6 @@ spec:
             path: /
             backend:
               service:
-                name: {{ .Release.Name }}
+                name: {{ .Release.Name }}-svc
                 port:
                   number: {{ .Values.service.port }}
