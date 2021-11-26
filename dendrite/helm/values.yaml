@@ -1,13 +1,18 @@
 replicaCount: 1
 
+deployments:
+  containers:
+    containerPort:
+      hhtp: 8008
+      https: 8448
+
 image:
   repository: matrixdotorg/dendrite-monolith
   pullPolicy: IfNotPresent
-  tag: v.0.5.1
+  tag: v0.5.1
 
 service:
   type: ClusterIP
-  http:
-    port: 8004
-  https:
-    port: 8448
+  ports:
+    http: 8008
+    https: 8448
