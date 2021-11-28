@@ -5,3 +5,5 @@ metadata:
 data:
   dendrite.yaml: |-
 {{ .Files.Get "dendrite.yaml" | indent 4 }}
+  matrix_key.pem: |-
+{{ .Files.Get "matrix_key.pem" | indent 4 }}

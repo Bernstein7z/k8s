@@ -45,3 +45,9 @@ Temporary Items
 .idea_modules/
 /out/
 *.iml
+
+## Secrets
+
+*.pem
+*.crt
+*.key

@@ -17,10 +17,19 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "v0.5.0" }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: config-volume
+            - name: config-file
               readOnly: true
               mountPath: /etc/dendrite/dendrite.yaml
               subPath: dendrite.yaml
+            - name: matrix-key
+              mountPath: /etc/dendrite/matrix_key.pem
+              subPath: matrix_key.pem
+            - name: server-crt
+              mountPath: /etc/dendrite/server.crt
+              subPath: server.crt
+            - name: server-key
+              mountPath: /etc/dendrite/server.key
+              subPath: server.key
           ports:
             - name: http
               containerPort: {{ .Values.deployments.containers.containerPort.hhtp }}
@@ -37,6 +46,15 @@ spec:
             periodSeconds: {{ .periodSeconds }}
           {{- end }}
       volumes:
-        - name: config-volume
+        - name: config-file
           configMap:
             name: {{ .Release.Name }}-cm
+        - name: matrix-key
+          configMap:
+            name: {{ .Release.Name }}-cm
+        - name: server-crt
+          secret:
+            secretName: secret-tls
+        - name: server-key
+          secret:
+            secretName: secret-tls
