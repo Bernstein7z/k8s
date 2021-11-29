@@ -1,5 +1,7 @@
 replicaCount: 1
 
+serverName: dendrite-svc
+
 deployments:
   containers:
     containerPort:
@@ -16,3 +18,11 @@ service:
   ports:
     http: 8008
     https: 8448
+  federation:
+    type: ClusterIP
+    port: 80
+
+volume:
+  storage: 200Mi
+  claime:
+    storage: 50Mi

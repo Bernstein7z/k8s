@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-svc
 spec:
   type: {{ .Values.service.type }}
   selector:
@@ -9,9 +9,5 @@ spec:
   ports:
     - name: http
       port: {{ .Values.service.ports.http }}
-      targetPort: {{ .Values.deployments.containers.containerPort.hhtp }}
+      targetPort: cs
       protocol: TCP
-    - name: https
-      targetPort: {{ .Values.deployments.containers.containerPort.https }}
-      protocol: TCP
-      port: {{ .Values.service.ports.https}}

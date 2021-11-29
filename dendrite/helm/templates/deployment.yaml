@@ -12,29 +12,37 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      {{- if .Release.IsInstall }}
+      initContainers:
+        - name: generate-signing-key
+          image: "golang:1.17-alpine"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh"]
+          args:
+            - "-c"
+            - "go install github.com/matrix-org/dendrite/cmd/generate-keys@latest && generate-keys --private-key=/etc/dendrite/matrix_key.pem --tls-cert=/etc/dendrite/server.crt --tls-key=/etc/dendrite/server.key"
+          env:
+            - name: GOCACHE
+              value: "/go/.cache"
+          volumeMounts:
+            - name: keys
+              mountPath: /etc/dendrite/
+      {{- end }}
       containers:
         - name: {{ .Release.Name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "v0.5.0" }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: config-file
-              readOnly: true
+            - name: config
               mountPath: /etc/dendrite/dendrite.yaml
               subPath: dendrite.yaml
-            - name: matrix-key
-              mountPath: /etc/dendrite/matrix_key.pem
-              subPath: matrix_key.pem
-            - name: server-crt
-              mountPath: /etc/dendrite/server.crt
-              subPath: server.crt
-            - name: server-key
-              mountPath: /etc/dendrite/server.key
-              subPath: server.key
+            - name: keys
+              mountPath: /etc/dendrite/
           ports:
-            - name: http
+            - name: cs
               containerPort: {{ .Values.deployments.containers.containerPort.hhtp }}
               protocol: TCP
-            - name: https
+            - name: federation
               containerPort: {{ .Values.deployments.containers.containerPort.https }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
@@ -46,15 +54,9 @@ spec:
             periodSeconds: {{ .periodSeconds }}
           {{- end }}
       volumes:
-        - name: config-file
+        - name: config
           configMap:
             name: {{ .Release.Name }}-cm
-        - name: matrix-key
-          configMap:
-            name: {{ .Release.Name }}-cm
-        - name: server-crt
-          secret:
-            secretName: secret-tls
-        - name: server-key
-          secret:
-            secretName: secret-tls
+        - name: keys
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc
