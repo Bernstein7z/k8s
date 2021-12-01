@@ -40,7 +40,7 @@ spec:
               mountPath: /etc/dendrite/
           ports:
             - name: cs
-              containerPort: {{ .Values.deployments.containers.containerPort.hhtp }}
+              containerPort: {{ .Values.deployments.containers.containerPort.http }}
               protocol: TCP
             - name: federation
               containerPort: {{ .Values.deployments.containers.containerPort.https }}

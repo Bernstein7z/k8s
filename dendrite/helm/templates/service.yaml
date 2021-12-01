@@ -10,4 +10,5 @@ spec:
     - name: http
       port: {{ .Values.service.ports.http }}
       targetPort: cs
+      nodePort: {{ .Values.service.nodePorts.http }}
       protocol: TCP

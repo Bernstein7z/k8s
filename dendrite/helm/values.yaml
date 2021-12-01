@@ -5,7 +5,7 @@ serverName: dendrite-svc
 deployments:
   containers:
     containerPort:
-      hhtp: 8008
+      http: 8008
       https: 8448
 
 image:
@@ -14,13 +14,12 @@ image:
   tag: v0.5.1
 
 service:
-  type: ClusterIP
+  type: NodePort
   ports:
     http: 8008
     https: 8448
-  federation:
-    type: ClusterIP
-    port: 80
+  nodePorts:
+    http: 30009
 
 volume:
   storage: 200Mi

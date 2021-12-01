@@ -1,5 +1,10 @@
 replicaCount: 1
 
+server:
+  name: localhost
+  baseURL: http://localhost
+  port: 30009
+
 image:
   repository: custom/element
   tag: v1.0.0
