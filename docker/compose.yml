@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  # PostgreSQL is needed for both polylith and monolith modes.
+  postgres:
+    image: postgres:11
+    restart: always
+    volumes:
+      - ./dendrite/build/docker/postgres/create_db.sh:/docker-entrypoint-initdb.d/20-create_db.sh
+    # To persist your PostgreSQL databases outside of the Docker image, to
+    # prevent data loss, you will need to add something like this:
+    #  - ./path/to/persistent/storage:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: itsasecret
+      POSTGRES_USER: dendrite
+    networks:
+      - internal
+  monolith:
+    image: matrixdotorg/dendrite-monolith:latest
+    depends_on:
+      - postgres
+    command: [ "--tls-cert=server.crt", "--tls-key=server.key" ]
+    ports:
+      - "8008:8008"
+      - "8448:8448"
+    volumes:
+      - ./dendrite/build/docker/config:/etc/dendrite
+      - ./dendrite/build/docker/media:/var/dendrite/media
+    networks:
+      - internal
+  element:
+    depends_on:
+      - monolith
+    build:
+      context: ./element-web/
+      dockerfile: Dockerfile
+    env_file:
+      - ./element-web/.env
+    networks:
+      - internal
+    ports:
+      - "3000:80"
+
+networks:
+  internal:
+    attachable: true
