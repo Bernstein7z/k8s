@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # start helm
-helm uninstall element synapse > /dev/null
+helm uninstall element synapse dendrite > /dev/null
 helm install synapse "./synapse/helm/"
 helm install element "./element/helm/"
 
