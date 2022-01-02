@@ -51,4 +51,3 @@ Temporary Items
 *.pem
 *.crt
 *.key
-secret*.yaml
