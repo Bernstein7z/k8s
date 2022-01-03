@@ -140,6 +140,7 @@ spec:
               mountPath: /media
             - name: config
               mountPath: /config
+{{- if .Values.isProbesActive }}
           readinessProbe:
             httpGet:
               path: /_matrix/client/versions
@@ -162,6 +163,7 @@ spec:
             initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
             failureThreshold: {{ .Values.probes.startup.failureThreshold }}
             periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+{{- end }}
 {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
