@@ -32,7 +32,7 @@ version: 1
 
 # Global Matrix configuration. This configuration applies to all components.
 global:
-  # The domain name of this homeserver.
+  # The domain name of this HomeServer.
   server_name: localhost
 
   # The path to the signing private key file, used to sign requests and events.
@@ -43,7 +43,7 @@ global:
   # The paths and expiry timestamps (as a UNIX timestamp in millisecond precision)
   # to old signing private keys that were formerly in use on this domain. These
   # keys will not be used for federation request or event signing, but will be
-  # provided to any other homeserver that asks when trying to verify old events.
+  # provided to any other HomeServer that asks when trying to verify old events.
   # old_private_keys:
   # - private_key: old_matrix_key.pem
   #   expired_at: 1601024554498
@@ -51,7 +51,7 @@ global:
   # How long a remote server can cache our server signing key before requesting it
   # again. Increasing this number will reduce the number of requests made by other
   # servers for our key but increases the period that a compromised key will be
-  # considered valid by other homeservers.
+  # considered valid by other HomeServers.
   key_validity_period: 168h0m0s
 
   # The server name to delegate server-server communications to, with optional port
@@ -75,8 +75,8 @@ global:
     # addresses:
     #   - localhost:2181
 
-    # The prefix to use for Kafka topic names for this homeserver. Change this only if
-    # you are running more than one Dendrite homeserver on the same Kafka deployment.
+    # The prefix to use for Kafka topic names for this HomeServer. Change this only if
+    # you are running more than one Dendrite HomeServer on the same Kafka deployment.
     topic_prefix: Dendrite
 
     # Whether to use Naffka instead of Kafka. This is only available in monolith
@@ -134,7 +134,7 @@ app_service_api:
   # to be sent to an unverified endpoint.
   disable_tls_validation: false
 
-  # Appservice configuration files to load into this homeserver.
+  # Appservice configuration files to load into this HomeServer.
   config_files: [ ]
 
 # Configuration for the Client API.
@@ -145,7 +145,7 @@ client_api:
   external_api:
     listen: http://[::]:8071
 
-  # Prevents new users from being able to register on this homeserver, except when
+  # Prevents new users from being able to register on this HomeServer, except when
   # using the registration shared secret below.
   registration_disabled: false
 
@@ -162,7 +162,7 @@ client_api:
   recaptcha_bypass_secret: ""
   recaptcha_siteverify_api: ""
 
-  # TURN server information that this homeserver should send to clients.
+  # TURN server information that this HomeServer should send to clients.
   turn:
     turn_user_lifetime: ""
     turn_uris: [ ]
@@ -213,7 +213,7 @@ federation_sender:
   # backoff is 2**x seconds, so 1 = 2 seconds, 2 = 4 seconds, 3 = 8 seconds etc.
   send_max_retries: 16
 
-  # Disable the validation of TLS certificates of remote federated homeservers. Do not
+  # Disable the validation of TLS certificates of remote federated HomeServers. Do not
   # enable this option in production as it presents a security risk!
   disable_tls_validation: false
 
@@ -251,7 +251,7 @@ media_api:
   # Storage path for uploaded media. May be relative or absolute.
   base_path: ./media_store
 
-  # The maximum allowed file size (in bytes) for media uploads to this homeserver
+  # The maximum allowed file size (in bytes) for media uploads to this HomeServer
   # (0 = unlimited). If using a reverse proxy, ensure it allows requests at
   # least this large (e.g. client_max_body_size in nginx.)
   max_file_size_bytes: 10485760

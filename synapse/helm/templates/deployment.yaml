@@ -1,10 +1,10 @@
-{{- if eq (required .Values.homeserver.macaroon_secret_key "need to set homeserver.macaroon_secret_key") "hA3r4nhUccExt2J0*V0tWilKXLy.hVfb8Uc:D5M-zsXoT=S#*@" }}
+{{- if eq (required .Values.HomeServer.macaroon_secret_key "need to set HomeServer.macaroon_secret_key") "hA3r4nhUccExt2J0*V0tWilKXLy.hVfb8Uc:D5M-zsXoT=S#*@" }}
 {{- fail "Your still using the original default macaroon_secret_key" }}
 {{- end }}
-{{- if eq (required .Values.homeserver.form_secret "need to set homeserver.form_secret") "f7wd*VF;OXBLY:-A#Fw@p#yT1Kd#WkVK#GMp;Kd;b7l=*u&^vu" }}
+{{- if eq (required .Values.HomeServer.form_secret "need to set HomeServer.form_secret") "f7wd*VF;OXBLY:-A#Fw@p#yT1Kd#WkVK#GMp;Kd;b7l=*u&^vu" }}
 {{- fail "Your still using the original default form_secret" }}
 {{- end }}
-{{- if eq (required .Values.homeserver.registration_shared_secret "need to set homeserver.registration_shared_secret") ".fnhLGB&_xY:&k=kEnGpPJ6l=3eyc2zsf8D^_,jsZ1J++sGkDG" }}
+{{- if eq (required .Values.HomeServer.registration_shared_secret "need to set HomeServer.registration_shared_secret") ".fnhLGB&_xY:&k=kEnGpPJ6l=3eyc2zsf8D^_,jsZ1J++sGkDG" }}
 {{- fail "Your still using the original default registration_shared_secret" }}
 {{- end }}
 apiVersion: apps/v1
@@ -76,10 +76,10 @@ spec:
           env:
             - { name: SYNAPSE_CONFIG_DIR, value: "/data" }
             - { name: SYNAPSE_DATA_DIR, value: "/data" }
-            - { name: SYNAPSE_CONFIG_PATH, value: "/config/homeserver.yaml" }
+            - { name: SYNAPSE_CONFIG_PATH, value: "/config/HomeServer.yaml" }
             - { name: UID, value: {{ .Values.settings.uid | quote }} }
             - { name: GID, value: {{ .Values.settings.gid | quote }} }
-            - { name: SYNAPSE_SERVER_NAME, value: {{ .Values.homeserver.server_name | quote }} }
+            - { name: SYNAPSE_SERVER_NAME, value: {{ .Values.HomeServer.server_name | quote }} }
             - { name: SYNAPSE_REPORT_STATS, value: {{ .Values.settings.report_stats | toString | quote }} }
             - { name: SYNAPSE_CACHE_FACTOR, value: {{ .Values.cacheFactor | toString | quote }} }
           resources:
@@ -127,10 +127,10 @@ spec:
           env:
             - { name: SYNAPSE_CONFIG_DIR, value: "/data" }
             - { name: SYNAPSE_DATA_DIR, value: "/data" }
-            - { name: SYNAPSE_CONFIG_PATH, value: "/config/homeserver.yaml" }
+            - { name: SYNAPSE_CONFIG_PATH, value: "/config/HomeServer.yaml" }
             - { name: UID, value: {{ .Values.settings.uid | quote }} }
             - { name: GID, value: {{ .Values.settings.gid | quote }} }
-            - { name: SYNAPSE_SERVER_NAME, value: {{ .Values.homeserver.server_name | quote }} }
+            - { name: SYNAPSE_SERVER_NAME, value: {{ .Values.HomeServer.server_name | quote }} }
             - { name: SYNAPSE_REPORT_STATS, value: {{ .Values.settings.report_stats | toString | quote }} }
             - { name: SYNAPSE_CACHE_FACTOR, value: {{ .Values.cacheFactor | toString | quote }} }
           volumeMounts:
