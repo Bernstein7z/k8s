@@ -19,25 +19,6 @@ type RegisterAuthData struct {
 	Type    string `json:"type"`
 }
 
-type registerType struct {
-	SSO struct {
-		IdentityProviders []struct {
-			Id    string
-			Name  string
-			Brand string
-		}
-	}
-	Token              string
-	Password           string
-	ApplicationService string
-}
-
-var RegisterType = registerType{
-	Token:              "m.login.token",
-	Password:           "m.login.password",
-	ApplicationService: "m.login.application_service",
-}
-
 type Register struct {
 	Auth                     RegisterAuthData `json:"auth"`
 	InhibitLogin             bool             `json:"inhibit_login"`
@@ -50,4 +31,57 @@ type RegisterResponse struct {
 	AccessToken string `json:"access_token"`
 	DeviceId    string `json:"device_id"`
 	UserId      string `json:"user_id"`
+}
+
+type UserIdentifier struct {
+	Type string `json:"type"` // m.id.user, m.id.thirdparty, m.id.phone
+	User string `json:"user"` // username
+}
+
+type LoginRequest struct {
+	InitialDeviceDisplayName string         `json:"initial_device_display_name"`
+	Password                 string         `json:"password"`
+	Type                     string         `json:"type"` // m.login.password, m.login.token
+	Identifier               UserIdentifier `json:"identifier"`
+}
+
+type LoginResponse struct {
+	AccessToken string `json:"access_token"`
+	DeviceId    string `json:"device_id"`
+	UserId      string `json:"user_id"`
+}
+
+type Admin struct {
+	AccessToken string `json:"access_token"`
+	UserId      string `json:"user_id"`
+	DeviceId    string `json:"device_id"`
+}
+
+type CreationContent struct {
+	MFederate bool `json:"m.federate"`
+}
+
+type Content struct {
+	GuestAccess string `json:"guest_access"`
+}
+
+type StateEvent struct {
+	Type     string  `json:"type"`
+	StateKey string  `json:"state_key"`
+	Content  Content `json:"content"`
+}
+
+type RoomRequest struct {
+	Name            string          `json:"name"`
+	Preset          string          `json:"preset"` // private_chat, public_chat, trusted_private_chat
+	RoomAliasName   string          `json:"room_alias_name"`
+	Topic           string          `json:"topic"`
+	Visibility      string          `json:"visibility"` // public, private
+	Invite          []string        `json:"invite"`     // users who should be invited
+	CreationContent CreationContent `json:"creation_content"`
+	InitialState    []StateEvent    `json:"initial_state"`
+}
+
+type RoomResponse struct {
+	RoomId string `json:"room_id"`
 }
