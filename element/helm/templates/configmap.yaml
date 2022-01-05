@@ -6,7 +6,7 @@ data:
   config.json: |-
     {
       "default_server_config": {
-        "m.HomeServer": {
+        "m.homeserver": {
           "base_url": "{{ .Values.server.baseURL }}:{{ .Values.server.port }}",
           "server_name": "{{ .Values.server.name }}"
         },

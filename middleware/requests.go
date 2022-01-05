@@ -34,8 +34,8 @@ func (user User) IsAvailable() (bool, error) {
 	return true, nil
 }
 
-// initialRegister
-func initialRegister() ([2]string, error) {
+// RegisterGET
+func RegisterGET() ([2]string, error) {
 	uriExtension := "/_matrix/client/v3/register"
 	uri := Server.BaseURL + uriExtension
 
@@ -80,7 +80,7 @@ func (user User) Register() (RegisterResponse, error) {
 	uriExtension := "/_matrix/client/v3/register"
 	uri := Server.BaseURL + uriExtension
 
-	initial, err := initialRegister()
+	initial, err := RegisterGET()
 	if err != nil {
 		return RegisterResponse{}, errors.New(err.Error())
 	}
@@ -137,11 +137,33 @@ func (user User) Login() (LoginResponse, error) {
 	request, _ := http.NewRequest(http.MethodPost, uri, bytes.NewBuffer(body))
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return LoginResponse{}, errors.New("could not request a login: " + err.Error())
+	}
+	if resp.StatusCode != http.StatusOK {
+		var sr SynapseErr
+		_ = json.NewDecoder(resp.Body).Decode(&sr)
+		return LoginResponse{}, errors.New(sr.ErrCode + ": " + sr.Error)
+	}
+
+	var result LoginResponse
+	_ = json.NewDecoder(resp.Body).Decode(&result)
+	return result, nil
 }
 
-func (admin Admin) CreateRoom(name string, topic string) (RoomResponse, error) {
+func (admin Admin) CreateRoom(name string, topic string, users *[]string) (Room, error) {
 	uriExtension := "/_matrix/client/v3/createRoom"
 	uri := Server.BaseURL + uriExtension
+
+	usersMap := make(map[string]int8)
+
+	if len(*users) != 0 {
+		for _, user := range *users {
+			usersMap[user] = 0
+		}
+		usersMap["@admin:localhost"] = 100
+	}
 
 	payload := RoomRequest{
 		Name:          name,
@@ -149,7 +171,7 @@ func (admin Admin) CreateRoom(name string, topic string) (RoomResponse, error) {
 		RoomAliasName: name,
 		Topic:         topic,
 		Visibility:    "private",
-		Invite:        []string{"@alan:localhost"},
+		Invite:        *users,
 		CreationContent: CreationContent{
 			MFederate: false,
 		},
@@ -162,6 +184,14 @@ func (admin Admin) CreateRoom(name string, topic string) (RoomResponse, error) {
 				},
 			},
 		},
+		PowerLevelContentOverride: PowerLevelEventContent{
+			EventsDefault: 50,
+			Events: map[string]int8{
+				"m.room.name":         50,
+				"m.room.power_levels": 100,
+			},
+			Users: usersMap,
+		},
 	}
 	body, _ := json.Marshal(payload)
 
@@ -171,18 +201,18 @@ func (admin Admin) CreateRoom(name string, topic string) (RoomResponse, error) {
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", admin.AccessToken))
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return RoomResponse{}, errors.New(err.Error())
+		return Room{}, errors.New(err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
 		var sr SynapseErr
 		_ = json.NewDecoder(resp.Body).Decode(&sr)
-		return RoomResponse{}, errors.New(sr.ErrCode + ": " + sr.Error)
+		return Room{}, errors.New(sr.ErrCode + ": " + sr.Error)
 	}
 	defer resp.Body.Close()
 
-	var result RoomResponse
+	var result Room
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return RoomResponse{}, errors.New(err.Error())
+		return Room{}, errors.New(err.Error())
 	}
 
 	return result, nil

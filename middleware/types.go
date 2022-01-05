@@ -53,8 +53,8 @@ type LoginResponse struct {
 
 type Admin struct {
 	AccessToken string `json:"access_token"`
-	UserId      string `json:"user_id"`
 	DeviceId    string `json:"device_id"`
+	UserId      string `json:"user_id"`
 }
 
 type CreationContent struct {
@@ -72,16 +72,23 @@ type StateEvent struct {
 }
 
 type RoomRequest struct {
-	Name            string          `json:"name"`
-	Preset          string          `json:"preset"` // private_chat, public_chat, trusted_private_chat
-	RoomAliasName   string          `json:"room_alias_name"`
-	Topic           string          `json:"topic"`
-	Visibility      string          `json:"visibility"` // public, private
-	Invite          []string        `json:"invite"`     // users who should be invited
-	CreationContent CreationContent `json:"creation_content"`
-	InitialState    []StateEvent    `json:"initial_state"`
+	Name                      string                 `json:"name"`
+	Preset                    string                 `json:"preset"` // private_chat, public_chat, trusted_private_chat
+	RoomAliasName             string                 `json:"room_alias_name"`
+	Topic                     string                 `json:"topic"`
+	Visibility                string                 `json:"visibility"` // public, private
+	Invite                    []string               `json:"invite"`     // users who should be invited
+	CreationContent           CreationContent        `json:"creation_content"`
+	InitialState              []StateEvent           `json:"initial_state"`
+	PowerLevelContentOverride PowerLevelEventContent `json:"power_level_content_override"`
 }
 
-type RoomResponse struct {
+type Room struct {
 	RoomId string `json:"room_id"`
+}
+
+type PowerLevelEventContent struct {
+	EventsDefault int8            `json:"events_default"` // set to 50 for info channels
+	Events        map[string]int8 `json:"events"`
+	Users         map[string]int8 `json:"users"`
 }
