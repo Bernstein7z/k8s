@@ -76,13 +76,13 @@ func RegisterGET() ([2]string, error) {
 }
 
 // Register
-func (user User) Register() (RegisterResponse, error) {
+func (user User) Register() (Response, error) {
 	uriExtension := "/_matrix/client/v3/register"
 	uri := Server.BaseURL + uriExtension
 
 	initial, err := RegisterGET()
 	if err != nil {
-		return RegisterResponse{}, errors.New(err.Error())
+		return Response{}, errors.New(err.Error())
 	}
 
 	payload := Register{
@@ -102,24 +102,24 @@ func (user User) Register() (RegisterResponse, error) {
 	request.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return RegisterResponse{}, errors.New(err.Error())
+		return Response{}, errors.New(err.Error())
 	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusUnauthorized {
 		var sr SynapseErr
 		_ = json.NewDecoder(resp.Body).Decode(&sr)
-		return RegisterResponse{}, errors.New(sr.ErrCode + ": " + sr.Error)
+		return Response{}, errors.New(sr.ErrCode + ": " + sr.Error)
 	}
 	defer resp.Body.Close()
 
-	var matrixData RegisterResponse
+	var matrixData Response
 	if err := json.NewDecoder(resp.Body).Decode(&matrixData); err != nil {
-		return RegisterResponse{}, errors.New(err.Error())
+		return Response{}, errors.New(err.Error())
 	}
 
 	return matrixData, nil
 }
 
-func (user User) Login() (LoginResponse, error) {
+func (user User) Login() (Response, error) {
 	uriExtension := "/_matrix/client/v3/login"
 	uri := Server.BaseURL + uriExtension
 
@@ -139,15 +139,15 @@ func (user User) Login() (LoginResponse, error) {
 	request.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return LoginResponse{}, errors.New("could not request a login: " + err.Error())
+		return Response{}, errors.New("could not request a login: " + err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
 		var sr SynapseErr
 		_ = json.NewDecoder(resp.Body).Decode(&sr)
-		return LoginResponse{}, errors.New(sr.ErrCode + ": " + sr.Error)
+		return Response{}, errors.New(sr.ErrCode + ": " + sr.Error)
 	}
 
-	var result LoginResponse
+	var result Response
 	_ = json.NewDecoder(resp.Body).Decode(&result)
 	return result, nil
 }

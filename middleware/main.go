@@ -38,7 +38,7 @@ func init() {
 func main() {
 	var users []string
 	users = []string{"@alan:localhost"}
-	room, err := AdminUser.CreateRoom("syndicate", "testing admin room", &users)
+	room, err := AdminUser.CreateRoom("Bonn", "testing admin room", &users)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -27,7 +27,7 @@ type Register struct {
 	Username                 string           `json:"username"`
 }
 
-type RegisterResponse struct {
+type Response struct {
 	AccessToken string `json:"access_token"`
 	DeviceId    string `json:"device_id"`
 	UserId      string `json:"user_id"`
@@ -43,12 +43,6 @@ type LoginRequest struct {
 	Password                 string         `json:"password"`
 	Type                     string         `json:"type"` // m.login.password, m.login.token
 	Identifier               UserIdentifier `json:"identifier"`
-}
-
-type LoginResponse struct {
-	AccessToken string `json:"access_token"`
-	DeviceId    string `json:"device_id"`
-	UserId      string `json:"user_id"`
 }
 
 type Admin struct {
