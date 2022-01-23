@@ -736,7 +736,7 @@ HomeServer:
     # Arguments to pass to the engine
     args:
       # Path to the database
-      database: "/data/HomeServer.db"
+      database: "/data/homeserver.db"
 
   # Number of events to cache in memory.
   #
