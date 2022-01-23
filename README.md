@@ -6,6 +6,7 @@ Dieser Repo beinhaltet den source code, der im Rahmen der Praxisphase zustande g
 die Evaluierung der [Matrix Spezifikation](https://spec.matrix.org/latest/) und die Realisierung eines in diesem Rahmen
 festgelegten PoCs(Proof of Concept). Für weitere Anforderungsanalysen siehe den
 [mural board](https://app.mural.co/t/sprinteins1549/m/sprinteins1549/1636105317890/65870bfda3ff79f8b53c2345e2c8d79a2ef7f938?sender=15c9e8be-0d6a-418c-80b6-0b89ec5eb49d).
+Es ist noch zu erwähnen, dass im Rahmen des Praxisprojekts die *client-server API* Anwendung fand. 
 
 ### Proof of Concept
 
@@ -64,8 +65,9 @@ wurde der `synapse` server näher betrachtet.
 Diese Anforderungen __müssen__ vorhanden sein, dennoch werden sie mithilfe des `init` Script installiert werden.
 Ansonsten müssen diese bereits auf dem Zielbetriebssystem bereits vorhanden sein. 
 
-- Ingress Nginx Controller
-- Custom docker image von Element mit dem Namen `custom/element:v1.0.0`
+- `kubectl`
+- `docker`
+- `helm`
 
 ## Get started
 
@@ -84,15 +86,15 @@ Zum Start mit dem *default* Einstellungen führe den folgenden Befehl in der Con
 bash init.sh
 ```
 
-Der FE service und damit `element` service kann durch die Adresse [http://localhost:80](http://localhost:80) erreicht
-werden.
+Der FE und damit `element` kann durch die Adresse [http://localhost:80](http://localhost:80) erreicht werden.
 
 ## Anpassung
 
 ### FE
 
-Der FE wurde außer `homeserver` and dessen `Port` nicht weiter angepasst. Das heißt wiederum, dass wenn der *homeserver*
-oder dessen *Port* sich ändern sollten, müssen diese dementsprechend beim FE angepasst werden.
+Der FE wurde unter `m.homeserver` die `base_url` zusammen mit dem Port und der `server_name` angepasst. Das heißt
+wiederum, dass wenn der *homeserver* oder dessen *Port* sich ändern sollten, diese dementsprechend beim FE
+angepasst werden müssen.
 
 ### BEs
 
@@ -100,8 +102,26 @@ Beide Implementierungen geben den Port `30009` frei.
 
 __(Nur Synapse)__: Die Konfiguration für OpenID-Connect wurde bei `values.yaml` unter `oidc_providers` ergänzt. Diese
 wurden aus der [Dokumentation](https://matrix-org.github.io/synapse/latest/openid.html) von `synapse` entnommen.
-
+Hier wird u. a. festgelegt wie der *externe* User im Matrix angelegt wird. Hierzu siehe `values.yaml` unter synapse
+Ordner.
 
 ### Middleware service
 
-Dieser Service stellt 
+Dieser Service stellt der Admin-Bot dar. Ferner sollte es als PoC für das automatisierte und granulare API-Ansprechen
+von dem Matrix-BE dienen.
+
+Der Service ist in Go geschrieben und ist einfach und modular aufgebaut. Dennoch *muss* der Service manuell gestartet
+werden. __Der richtige Zeitpunkt ist nach dem erfolgreichen Einloggen der User__. Weiterhin ist es zu beachten, dass
+der angesprochene *Dummy User* __@alan:localhost__ hardgecoded ist. Diese *sollte* im Falle einer OIDC-Anbindung geändert
+werden.
+
+Bei seiner *initialen* Funktion wird der Service den BE nach einem bestimmten User `@admin:localhost` abfragen und wenn
+dieser nicht vorhanden ist, wird diesen angelegt. Wenn der User aber bereits vorhanden sein sollte, wird der Service
+sich als solchen beim Matrix-BE einloggen.
+
+Anschließend wird durch den Admin-Bot ein Raum erstellt, den Dummy-User zu diesem Raum hinzugefügt und gleichzeitig die
+Raum-Rechte des Users festgelegt. Es ict auch möglich die Rechte nach der Erstellung und User-Zuweisung anpassen. Es muss
+aber einen anderen API angesprochen werden (siehe entsprechendes Kommentar in `main.go`).
+
+Der Raum ist ein unidirektionaler Raum, indem nur bestimmte User Nachrichten senden und alle anderen nur diese empfangen
+können. Solcher Raum wird als *Infokanal* bezeichnet.

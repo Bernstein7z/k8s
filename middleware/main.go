@@ -45,5 +45,5 @@ func main() {
 	log.Println("room created successfully: ", room)
 }
 
-// for update power level of a certain room
+// update power level of a certain room
 //http://localhost:30009/_matrix/client/v3/rooms/{room_id}/state/m.room.power_levels/
